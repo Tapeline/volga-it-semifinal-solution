@@ -1,0 +1,53 @@
+services:
+  account_service:
+    build: AccountService
+    hostname: account.service
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      PG_USER: ${DB_USER}
+      PG_PASS: ${DB_PASS}
+      PG_HOST: account_db
+      PG_PORT: 5432
+      MODE: production
+      ALLOWED_HOSTS: "*"
+    ports:
+      - "8081:8000"
+    expose:
+      - 8000
+    networks:
+      - sh_main_network
+    depends_on:
+      account_db:
+        condition: service_healthy
+
+  account_db:
+    image: postgres:13.3
+    hostname: account_db
+    environment:
+      POSTGRES_DB: account_db
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    ports:
+      - "5700:5432"
+    expose:
+      - "5432"
+    networks:
+      - sh_main_network
+    volumes:
+      - account_pgdata:/var/lib/postgresql/
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d account_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+
+networks:
+  sh_main_network:
+    driver: bridge
+
+
+volumes:
+  account_pgdata:
