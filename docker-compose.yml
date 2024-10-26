@@ -166,11 +166,13 @@ services:
     networks:
       - sh_main_network
     depends_on:
-      hospital_db:
+      document_db:
         condition: service_healthy
       account_service:
         condition: service_started
       hospital_service:
+        condition: service_started
+      elasticsearch:
         condition: service_started
 
   document_db:
