@@ -143,3 +143,10 @@ class RetrieveDoctorView(RetrieveAPIView):
     permission_classes = (IsAuthenticated, )
     serializer_class = serializers.UserSerializer
     queryset = repo.all_users(roles__contains="Doctor")
+
+
+class UserExistsView(APIView):
+    def get(self, request, *args, **kwargs):
+        return Response({
+            "exists": repo.user_with_role_exists(kwargs["pk"], kwargs["role"])
+        }, status=200)

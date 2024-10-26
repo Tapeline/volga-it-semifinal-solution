@@ -13,6 +13,7 @@ urlpatterns = [
     path("Accounts/Update/", views.UpdateMyProfileView.as_view()),
     path("Accounts/", views.ListCreateAllUsersView.as_view()),
     path("Accounts/<int:pk>/", views.UpdateDestroyUserView.as_view()),
+    path("Accounts/Exists/<str:role>/<int:pk>/", views.UserExistsView.as_view()),
     path("Doctors/", views.ListDoctorsView.as_view()),
     path("Doctors/<int:pk>/", views.RetrieveDoctorView.as_view()),
 ]

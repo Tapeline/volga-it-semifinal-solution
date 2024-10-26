@@ -5,6 +5,10 @@ def user_exists(username: str) -> bool:
     return models.User.objects.filter(username=username).exists()
 
 
+def user_with_role_exists(uid: int, role: str) -> bool:
+    return models.User.objects.filter(id=uid, roles__contains=role).exists()
+
+
 def save_token(user, access_token: str, refresh_token: str):
     models.IssuedToken.objects.create(user=user,
                                       token=access_token,
