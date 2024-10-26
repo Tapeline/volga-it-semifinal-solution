@@ -39,3 +39,17 @@ class GetHospitalRoomsView(APIView):
     def get(self, request, *args, **kwargs):
         hospital = repo.all_hospitals().get(id=kwargs["pk"])
         return Response(hospital.rooms)
+
+
+class HospitalExistsView(APIView):
+    def get(self, request, *args, **kwargs):
+        return Response({
+            "exists": repo.hospital_exists(kwargs["pk"])
+        }, status=200)
+
+
+class HospitalRoomExistsView(APIView):
+    def get(self, request, *args, **kwargs):
+        return Response({
+            "exists": repo.hospital_room_exists(kwargs["pk"], kwargs["room"])
+        }, status=200)
