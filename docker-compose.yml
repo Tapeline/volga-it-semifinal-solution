@@ -43,6 +43,8 @@ services:
       start_period: 10s
     restart: unless-stopped
 
+
+
   hospital_service:
     build: HospitalService
     hostname: hospital.service
@@ -54,7 +56,7 @@ services:
       PG_PORT: 5432
       MODE: production
       ALLOWED_HOSTS: "*"
-      ACCOUNT_SERVICE: "http://hospital.service:8000"
+      ACCOUNT_SERVICE: "http://account.service:8000"
     ports:
       - "8082:8000"
     expose:
@@ -83,7 +85,7 @@ services:
     volumes:
       - hospital_pgdata:/var/lib/postgresql/
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d account_db" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d hospital_db" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -91,11 +93,119 @@ services:
     restart: unless-stopped
 
 
+
+  timetable_service:
+    build: TimetableService
+    hostname: timetable.service
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      PG_USER: ${DB_USER}
+      PG_PASS: ${DB_PASS}
+      PG_HOST: timetable_db
+      PG_PORT: 5432
+      MODE: production
+      ALLOWED_HOSTS: "*"
+      HOSPITAL_SERVICE: "http://hospital.service:8000"
+      ACCOUNT_SERVICE: "http://account.service:8000"
+    ports:
+      - "8083:8000"
+    expose:
+      - 8000
+    networks:
+      - sh_main_network
+    depends_on:
+      timetable_db:
+        condition: service_healthy
+      account_service:
+        condition: service_started
+      hospital_service:
+        condition: service_started
+
+  timetable_db:
+    image: postgres:13.3
+    hostname: timetable_db
+    environment:
+      POSTGRES_DB: timetable_db
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    ports:
+      - "5702:5432"
+    expose:
+      - "5432"
+    networks:
+      - sh_main_network
+    volumes:
+      - timetable_pgdata:/var/lib/postgresql/
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d timetable_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+
+
+  document_service:
+    build: DocumentService
+    hostname: document.service
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      PG_USER: ${DB_USER}
+      PG_PASS: ${DB_PASS}
+      PG_HOST: document_db
+      PG_PORT: 5432
+      MODE: production
+      ALLOWED_HOSTS: "*"
+      ACCOUNT_SERVICE: "http://account.service:8000"
+      HOSPITAL_SERVICE: "http://hospital.service:8000"
+    ports:
+      - "8084:8000"
+    expose:
+      - 8000
+    networks:
+      - sh_main_network
+    depends_on:
+      hospital_db:
+        condition: service_healthy
+      account_service:
+        condition: service_started
+      hospital_service:
+        condition: service_started
+
+  document_db:
+    image: postgres:13.3
+    hostname: document_db
+    environment:
+      POSTGRES_DB: document_db
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    ports:
+      - "5703:5432"
+    expose:
+      - "5432"
+    networks:
+      - sh_main_network
+    volumes:
+      - document_pgdata:/var/lib/postgresql/
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d document_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+
+
 networks:
   sh_main_network:
     driver: bridge
 
 
+
 volumes:
   account_pgdata:
   hospital_pgdata:
+  timetable_pgdata:
+  document_pgdata:
