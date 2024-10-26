@@ -25,6 +25,7 @@ class RetrieveUpdateDestroyHospitalView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, permissions.HasAdminRoleOrReadOnly)
     serializer_class = serializers.HospitalSerializer
     queryset = repo.all_hospitals()
+    http_method_names = ("get", "put", "delete")
 
     def delete(self, request, *args, **kwargs):
         hospital = self.get_object()

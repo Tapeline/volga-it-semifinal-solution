@@ -16,6 +16,8 @@ from .exceptions import AppointmentAlreadyExistsException
 
 class UpdateDestroyAPIView(UpdateModelMixin, DestroyModelMixin,
                            GenericAPIView):
+    http_method_names = ("delete", "put")
+
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
 

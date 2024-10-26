@@ -24,6 +24,7 @@ class RetrieveUpdateDocumentView(RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated, permissions.CanEditOrPatientReadOnly)
     serializer_class = serializers.DocumentSerializer
     queryset = models.Document.objects.all()
+    http_method_names = ("get", "put")
 
     def update(self, request, *args, **kwargs):
         response = super().update(request, *args, **kwargs)

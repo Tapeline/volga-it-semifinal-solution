@@ -19,6 +19,8 @@ from api.exceptions import UserAlreadyExistsException, BadRequestException, Inva
 
 class UpdateDestroyAPIView(UpdateModelMixin, DestroyModelMixin,
                            GenericAPIView):
+    http_method_names = ("delete", "put")
+
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
 
@@ -100,6 +102,7 @@ class ProfileView(RetrieveAPIView):
 class UpdateMyProfileView(UpdateAPIView):
     permission_classes = (IsAuthenticated, )
     serializer_class = serializers.UpdateMyProfileSerializer
+    http_method_names = ("put",)
 
     def get_object(self):
         return self.request.user
