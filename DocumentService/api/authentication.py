@@ -1,7 +1,7 @@
 import requests
 from rest_framework import authentication
 
-from hospital_service import settings
+from document_service import settings
 
 
 class User:

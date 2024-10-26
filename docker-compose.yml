@@ -198,6 +198,9 @@ services:
 
 
 
+
+
+
 networks:
   sh_main_network:
     driver: bridge
@@ -209,3 +212,4 @@ volumes:
   hospital_pgdata:
   timetable_pgdata:
   document_pgdata:
+

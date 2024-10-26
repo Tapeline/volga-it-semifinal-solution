@@ -1,6 +1,6 @@
 import requests
 
-from timetable_service import settings
+from document_service import settings
 
 
 class AccountService:
