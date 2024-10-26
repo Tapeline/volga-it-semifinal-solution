@@ -198,6 +198,44 @@ services:
 
 
 
+  elasticsearch:
+    image: elasticsearch:7.17.25
+    #build: Elasticsearch
+    environment:
+      discovery.type: 'single-node'
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      xpack.security.enabled: "true"
+      ELASTIC_PASSWORD: ${ELASTIC_PASS}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data
+    expose:
+      - "9200"
+      - "9300"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - sh_main_network
+
+  kibana:
+    image: kibana:7.17.25
+    restart: always
+    environment:
+      ELASTICSEARCH_URL: "http://elasticsearch:9200"
+      ELASTICSEARCH_USERNAME: ${ELASTIC_KIBANA_USER}
+      ELASTICSEARCH_PASSWORD: ${ELASTIC_KIBANA_PASS}
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - sh_main_network
+    #volumes:
+      #- ./kibana.yml:/usr/share/kibana/config/kibana.yml
 
 
 
@@ -212,4 +250,4 @@ volumes:
   hospital_pgdata:
   timetable_pgdata:
   document_pgdata:
-
+  elastic_data:

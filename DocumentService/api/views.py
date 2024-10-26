@@ -3,7 +3,7 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView, RetrieveUpdate
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
-from . import permissions, serializers, models
+from . import permissions, serializers, models, elastic
 
 
 class PingView(APIView):
@@ -25,7 +25,22 @@ class RetrieveUpdateDocumentView(RetrieveUpdateAPIView):
     serializer_class = serializers.DocumentSerializer
     queryset = models.Document.objects.all()
 
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        if response.status_code != 200:
+            return response
+        elastic.update_document(response.data["id"], response.data)
+        return response
+
 
 class CreateDocumentView(CreateAPIView):
     permission_classes = (IsAuthenticated, permissions.CanCreateDocument)
     serializer_class = serializers.DocumentSerializer
+
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        if response.status_code != 201:
+            return response
+        elastic.index_document(response.data["id"], response.data)
+        return response
+

@@ -10,4 +10,4 @@ def hospital_exists(uid):
 
 
 def hospital_room_exists(uid, room_name: str):
-    return room_name in all_hospitals().get(uid).rooms
+    return room_name in all_hospitals().get(id=uid).rooms

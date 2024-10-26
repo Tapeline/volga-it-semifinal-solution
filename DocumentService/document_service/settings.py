@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'document_service.wsgi.application'
 DATABASES = {
     "local": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "documents_db",
+        "NAME": "document_db",
         "USER": os.environ.get("PG_USER") or "pguser",
         "PASSWORD": os.environ.get("PG_PASS") or "pgpass",
         "HOST": "localhost",
@@ -96,7 +96,7 @@ DATABASES = {
     },
     "production": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "documents_db",
+        "NAME": "document_db",
         "USER": os.environ.get("PG_USER"),
         "PASSWORD": os.environ.get("PG_PASS"),
         "HOST": os.environ.get("PG_HOST"),
@@ -150,9 +150,27 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "api.authentication.RemoteAuthentication",
+    ),
+    "DEFAULT_RENDERER_CLASSES": (
+        'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
+    ),
+    "DEFAULT_PARSER_CLASSES": (
+        'djangorestframework_camel_case.parser.CamelCaseFormParser',
+        'djangorestframework_camel_case.parser.CamelCaseMultiPartParser',
+        'djangorestframework_camel_case.parser.CamelCaseJSONParser',
+    )
+}
+
 CORS_ALLOW_ALL_ORIGINS = True
 ACCOUNT_SERVICE = os.getenv("ACCOUNT_SERVICE") or "http://localhost:8081"
 HOSPITAL_SERVICE = os.getenv("HOSPITAL_SERVICE") or "http://localhost:8082"
+ELASTIC_HOST = os.getenv("ELASTIC_HOST") or "http://localhost:9200"
+
+ELASTIC_USER = os.getenv("ELASTIC_USER") or "elastic"
+ELASTIC_PASS = os.getenv("ELASTIC_PASS") or "espass"
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
