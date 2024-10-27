@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "api",
-    "drf_yasg"
+    "drf_spectacular"
 ]
 
 MIDDLEWARE = [
@@ -175,3 +175,16 @@ ELASTIC_PASS = os.getenv("ELASTIC_PASS") or "espass"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 STATIC_ROOT = "static"
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Account service API',
+    'DESCRIPTION': 'Simbir.Health microservice',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'CAMELIZE_NAMES': False,
+
+    'POSTPROCESSING_HOOKS': [
+        'drf_spectacular.contrib.djangorestframework_camel_case.camelize_serializer_fields',
+        'drf_spectacular.hooks.postprocess_schema_enums'
+    ],
+}
