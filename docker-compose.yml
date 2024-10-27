@@ -253,3 +253,5 @@ volumes:
   timetable_pgdata:
   document_pgdata:
   elastic_data:
+
+# todo: jwt authorization in swagger
