@@ -2,9 +2,11 @@ from datetime import timedelta
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework.validators import UniqueTogetherValidator
 
 from . import models, validation
 from .services import HospitalService, AccountService
+from .validation import assert_true
 
 
 class TimetableSerializer(serializers.ModelSerializer):
@@ -20,17 +22,17 @@ class TimetableSerializer(serializers.ModelSerializer):
                 "validators": [validation.time_every_30_minutes_only]
             },
             "hospital_id": {
-                "validators": [HospitalService().hospital_exists]
+                "validators": [assert_true(HospitalService().hospital_exists, "No such hospital")]
             },
             "doctor_id": {
-                "validators": [AccountService().doctor_exists]
+                "validators": [assert_true(AccountService().doctor_exists, "No such doctor")]
             }
         }
-        validators = [validation.DeltaNoMoreThan(timedelta(hours=12))]
 
     def validate(self, attrs):
         if not HospitalService().hospital_room_exists(attrs["hospital_id"], attrs["room"]):
             raise ValidationError("No such room")
+        validation.DeltaNoMoreThan(timedelta(hours=12))(attrs)
         return super().validate(attrs)
 
 

@@ -12,6 +12,13 @@ class DeltaNoMoreThan:
     def __init__(self, delta):
         self.delta = delta
 
-    def __call__(self, attrs, serializer):
-        if attrs["to"] - attrs["from"] > self.delta:
+    def __call__(self, attrs):
+        if attrs["to"] - attrs["from_date"] > self.delta:
             raise ValidationError(f"Diff from-to should not be more than {self.delta}")
+
+
+def assert_true(validator, message):
+    def inner(*args, **kwargs):
+        if not validator(*args, **kwargs):
+            raise ValidationError(message)
+    return inner

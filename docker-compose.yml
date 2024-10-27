@@ -253,3 +253,6 @@ volumes:
   timetable_pgdata:
   document_pgdata:
   elastic_data:
+
+# todo: search endpoint
+# todo: generalize all errors

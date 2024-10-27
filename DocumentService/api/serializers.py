@@ -5,19 +5,26 @@ from . import models
 from .services import HospitalService, AccountService
 
 
+def assert_true(validator, message):
+    def inner(*args, **kwargs):
+        if not validator(*args, **kwargs):
+            raise ValidationError(message)
+    return inner
+
+
 class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Document
         fields = "__all__"
         extra_kwargs = {
             "hospital_id": {
-                "validators": [HospitalService().hospital_exists]
+                "validators": [assert_true(HospitalService().hospital_exists, "No such hospital")]
             },
             "doctor_id": {
-                "validators": [AccountService().doctor_exists]
+                "validators": [assert_true(AccountService().doctor_exists, "No such doctor")]
             },
             "pacient_id": {
-                "validators": [AccountService().user_exists]
+                "validators": [assert_true(AccountService().doctor_exists, "No such user")]
             }
         }
 

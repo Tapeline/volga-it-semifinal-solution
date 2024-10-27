@@ -1,7 +1,7 @@
 import datetime
 
 from django.http import HttpResponse
-from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view, OpenApiRequest
+from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view, OpenApiRequest, OpenApiParameter
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import (CreateAPIView, GenericAPIView, DestroyAPIView)
@@ -88,7 +88,7 @@ class RetrieveDeleteTimetablesByParameterView(APIView):
         try:
             from_date = datetime.datetime.fromisoformat(request.GET.get("from"))
             to_date = datetime.datetime.fromisoformat(request.GET.get("to"))
-        except TypeError | ValueError:
+        except BaseException:
             raise ValidationError("from and to should be iso8601 strings")
         timetables = self.get_queryset().filter(
             from_date__gte=from_date,
@@ -107,6 +107,20 @@ class RetrieveDeleteTimetablesByParameterView(APIView):
 @extend_schema_view(
     get=extend_schema(
         description="Get all timetables of provided doctor",
+        parameters=[
+            OpenApiParameter(
+                name="from",
+                description="From date",
+                type=datetime.datetime,
+                required=True
+            ),
+            OpenApiParameter(
+                name="to",
+                description="To date",
+                type=datetime.datetime,
+                required=True
+            ),
+        ],
         responses={
             **swagger.ok(
                 serializers.TimetableSerializer,
@@ -134,6 +148,20 @@ class RetrieveDeleteTimetablesByDoctorId(RetrieveDeleteTimetablesByParameterView
 @extend_schema_view(
     get=extend_schema(
         description="Get all timetables of provided hospital",
+        parameters=[
+            OpenApiParameter(
+                name="from",
+                description="From date",
+                type=datetime.datetime,
+                required=True
+            ),
+            OpenApiParameter(
+                name="to",
+                description="To date",
+                type=datetime.datetime,
+                required=True
+            ),
+        ],
         responses={
             **swagger.ok(
                 serializers.TimetableSerializer,
@@ -161,6 +189,20 @@ class RetrieveDeleteTimetablesByHospitalId(RetrieveDeleteTimetablesByParameterVi
 @extend_schema_view(
     get=extend_schema(
         description="Get all timetables of provided hospital room",
+        parameters=[
+            OpenApiParameter(
+                name="from",
+                description="From date",
+                type=datetime.datetime,
+                required=True
+            ),
+            OpenApiParameter(
+                name="to",
+                description="To date",
+                type=datetime.datetime,
+                required=True
+            ),
+        ],
         responses={
             **swagger.ok(
                 serializers.TimetableSerializer,
@@ -237,8 +279,8 @@ class AppointmentsView(APIView):
 
     def post(self, request, *args, **kwargs):
         timetable = models.Timetable.objects.get(id=kwargs["pk"])
-        target_time = request.data.time
-        if target_time < timetable.from_date or timetable > timetable.to:
+        target_time = datetime.datetime.fromisoformat(request.data["time"])
+        if target_time < timetable.from_date or target_time > timetable.to:
             raise ValidationError("time should be in timetable bounds")
         if models.Appointment.objects.filter(timetable=timetable, time=target_time).exists():
             raise AppointmentAlreadyExistsException
