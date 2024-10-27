@@ -72,7 +72,7 @@ class RetrieveUpdateDocumentView(RetrieveUpdateAPIView):
 
 @extend_schema_view(
     post=extend_schema(responses={
-        **swagger.ok(None, "Logout successful"),
+        **swagger.created(serializers.DocumentSerializer),
         **swagger.forbidden(),
         **swagger.bad_request(),
         **swagger.not_authorized()

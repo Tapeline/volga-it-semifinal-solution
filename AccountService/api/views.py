@@ -201,10 +201,7 @@ class UpdateMyProfileView(UpdateAPIView):
     post=extend_schema(
         description="Create a user with specific roles (admin only)",
         responses={
-            **swagger.ok(
-                serializers.RegistrationFromAdminSerializer,
-                "Return updated user model"
-            ),
+            **swagger.created(serializers.RegistrationFromAdminSerializer),
             **swagger.bad_request(),
             **swagger.forbidden(),
             **swagger.not_authorized()
