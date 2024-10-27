@@ -1,3 +1,4 @@
+from drf_spectacular.extensions import OpenApiAuthenticationExtension
 from drf_spectacular.utils import OpenApiResponse
 from rest_framework import serializers
 
@@ -42,3 +43,15 @@ def ok(schema, message):
 
 def deleted(message="Resource deleted"):
     return {204: OpenApiResponse(None, message)}
+
+
+class RemoteAuthenticationScheme(OpenApiAuthenticationExtension):
+    target_class = "api.authentication.RemoteAuthentication"
+    name = "JWT auth through account service"
+
+    def get_security_definition(self, auto_schema):
+        return {
+            'type': 'http',
+            'scheme': 'bearer',
+            'bearerFormat': 'JWT',
+        }
