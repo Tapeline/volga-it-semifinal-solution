@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "api",
-    "drf_yasg"
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -153,16 +153,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = "api.User"
 
 REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_RENDERER_CLASSES": (
-        #'rest_framework.renderers.JSONRenderer',
         'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
     ),
     "DEFAULT_PARSER_CLASSES": (
-        'djangorestframework_camel_case.parser.CamelCaseFormParser',
-        'djangorestframework_camel_case.parser.CamelCaseMultiPartParser',
         'djangorestframework_camel_case.parser.CamelCaseJSONParser',
     )
 }
@@ -179,3 +177,16 @@ CORS_ALLOW_ALL_ORIGINS = True
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 STATIC_ROOT = "static"
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Account service API',
+    'DESCRIPTION': 'Simbir.Health microservice',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'CAMELIZE_NAMES': False,
+
+    'POSTPROCESSING_HOOKS': [
+        'drf_spectacular.contrib.djangorestframework_camel_case.camelize_serializer_fields',
+        'drf_spectacular.hooks.postprocess_schema_enums'
+    ],
+}

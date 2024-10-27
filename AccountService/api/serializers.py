@@ -1,5 +1,6 @@
 from typing import Dict, Any
 
+from drf_spectacular.utils import extend_schema_serializer, extend_schema_field
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 
@@ -17,7 +18,18 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return models.User.objects.create_user(**validated_data)
 
 
+@extend_schema_field({
+    "type": "array",
+    "items": {"type": "string"},
+    "example": ["Admin", "User"]
+})
+class RoleListField(serializers.JSONField):
+    pass
+
+
 class UserSerializer(serializers.ModelSerializer):
+    roles = RoleListField()
+
     class Meta:
         model = models.User
         fields = ("id", "username", "first_name", "last_name", "roles")
@@ -45,6 +57,9 @@ class RefreshTokenSerializer(serializers.Serializer):
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    refresh = serializers.CharField(default="refresh token", read_only=True)
+    access = serializers.CharField(default="access token", read_only=True)
+
     def validate(self, attrs: Dict[str, Any]) -> Dict[str, str]:
         data = super().validate(attrs)
         if self.user.deleted:
@@ -54,8 +69,9 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 class CustomTokenRefreshSerializer(TokenRefreshSerializer):
-    refresh_token = serializers.CharField()
-    refresh = serializers.CharField(default="")
+    refresh_token = serializers.CharField(write_only=True)
+    refresh = serializers.CharField(default="refresh token", read_only=True)
+    access = serializers.CharField(default="access token", read_only=True)
 
     def validate(self, attrs: Dict[str, Any]) -> Dict[str, str]:
         if not repo.is_refresh_token_valid(attrs["refresh_token"]):
@@ -65,6 +81,8 @@ class CustomTokenRefreshSerializer(TokenRefreshSerializer):
 
 
 class RegistrationFromAdminSerializer(serializers.ModelSerializer):
+    roles = RoleListField()
+
     class Meta:
         model = models.User
         fields = ("id", "username", "password", "first_name", "last_name", "roles")
