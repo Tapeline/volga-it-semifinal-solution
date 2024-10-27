@@ -176,7 +176,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 STATIC_ROOT = "static"
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Account service API',
+    'TITLE': 'Document service API',
     'DESCRIPTION': 'Simbir.Health microservice',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
