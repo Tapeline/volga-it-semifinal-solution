@@ -167,7 +167,7 @@ class ProfileView(RetrieveAPIView):
 
 
 @extend_schema_view(
-    post=extend_schema(responses={
+    put=extend_schema(responses={
         **swagger.ok(
             serializers.UpdateMyProfileSerializer,
             "Return updated user model"
