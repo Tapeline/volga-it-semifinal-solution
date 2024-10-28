@@ -24,7 +24,7 @@ class DocumentSerializer(serializers.ModelSerializer):
                 "validators": [assert_true(AccountService().doctor_exists, "No such doctor")]
             },
             "pacient_id": {
-                "validators": [assert_true(AccountService().doctor_exists, "No such user")]
+                "validators": [assert_true(AccountService().user_exists, "No such user")]
             }
         }
 

@@ -159,6 +159,7 @@ services:
       ALLOWED_HOSTS: "*"
       ACCOUNT_SERVICE: "http://account.service:8000"
       HOSPITAL_SERVICE: "http://hospital.service:8000"
+      ELASTIC_HOST: "http://elasticsearch:9200"
       ELASTIC_USER: ${ELASTIC_USER}
       ELASTIC_PASS: ${ELASTIC_PASS}
     ports:
