@@ -14,7 +14,7 @@ class ErrorResponse(OpenApiResponse):
 
 
 def bad_request(message="Bad request format"):
-    return {400: ErrorResponse(message)}
+    return {400: OpenApiResponse(None, message)}
 
 
 def not_authorized(message="Not authorized"):
@@ -26,7 +26,7 @@ def forbidden(message="Not enough permissions"):
 
 
 def not_found(message="Resource with such parameters cannot be found"):
-    return {404: ErrorResponse(message)}
+    return {404: OpenApiResponse(None, message)}
 
 
 def conflict(message="Inputted data conflicts with data on server"):

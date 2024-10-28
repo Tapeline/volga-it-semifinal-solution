@@ -10,13 +10,19 @@ def connect():
     )
 
 
+_es = None
+
+
+def get_connection():
+    global _es
+    if _es is None:
+        _es = connect()
+    return _es
+
+
 def index_document(uid, body):
-    es = connect()
-    res = es.index(index="documents", id=str(uid), body=body)
-    print(res)
+    res = get_connection().index(index="documents", id=str(uid), body=body)
 
 
 def update_document(uid, body):
-    es = connect()
-    res = es.update(index="documents", id=str(uid), body={"doc": body})
-    print(res)
+    res = get_connection().update(index="documents", id=str(uid), body={"doc": body})
